@@ -11,6 +11,7 @@ class AdjacencyList {
 public:
 
     map<string, vector<pair<string, string>>> graph;
+    map<float,vector<string>> outputMap;
 
 
 public:
@@ -34,7 +35,14 @@ public:
                 cout<<"Country is not importing certain good from other countries!"<<endl;
                 return;
             }
-            std::cout << country_map[pair.first] << " -> " << pair.second << std::endl;
+
+            outputMap[stof(pair.second)].push_back(pair.first);
+            //std::cout << country_map[pair.first] << " -> " << pair.second << std::endl;
+        }
+        for(auto key:outputMap){
+            for(auto value: key.second){
+                cout<<country_map[value]<<"-->"<<key.first<<endl;
+            }
         }
     }
 
