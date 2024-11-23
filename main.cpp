@@ -16,14 +16,16 @@ int main() {
     cout << "Welcome to TradeMasters!" << endl;
     string productCode;
     while(t) {
-        cout << "Please enter the HS 6-digit product code of the product you would like to see the data for: ";
+        cout << "Please enter the HS 6-digit product code of the product you would like to see the data for:\n";
         cin >> productCode;
-
+        cout<<endl;
         string filename = "product_codes_HS22_V202401b.csv";
         if (isProductCodeInCSV(filename, productCode)) {
             cout << "Product code " << productCode << " was found in the CSV file!" << endl;
+            cout<<endl;
+            cout<<"Extracting data, please wait (it will take about 20 seconds to generate data)!"<<endl;
 
-            ifstream file("cleaned3_BACI_HS22_Y2022_V202401b.csv");
+            ifstream file("BACI_HS22_Y2022_V202401b_final.csv");
             if (!file.is_open()) {
                 cerr << "Error: Could not open the file!" << endl;
             }
@@ -31,13 +33,16 @@ int main() {
             string line;
             while (getline(file, line)) {
                 stringstream ss(line);
-                string export1, import, code, price;
+                string export1, import, code, price,weight,input;
+                float value;
 
                 if (getline(ss, export1, ',') && getline(ss, import, ',') &&
-                    getline(ss, code, ',') && getline(ss, price)) {
+                    getline(ss, code, ',') && getline(ss, price,',')&& getline(ss, weight)) {
+                    value=stof(price)/ stof(weight);
+                    input= to_string(value);
 
                     if (code == productCode) {
-                        adjList.add_keys(import, export1, price);
+                        adjList.add_keys(import, export1, input);
                     }
                 }
             }
@@ -66,18 +71,18 @@ int main() {
                      "16. Indonesia \n";
 
                 unordered_map<int, int> importCountryMap = {
-                        {1,  842},
-                        {2,  156},
-                        {3,  276},
-                        {4,  392},
-                        {5,  699},
-                        {6,  826},
-                        {7,  251},
-                        {8,  76},
-                        {9,  704},
+                        {1, 842},
+                        {2, 156},
+                        {3, 276},
+                        {4, 392},
+                        {5, 699},
+                        {6, 826},
+                        {7, 251},
+                        {8, 76},
+                        {9, 704},
                         {10, 410},
                         {11, 372},
-                        {12, 381},
+                        {12, 380},
                         {13, 764},
                         {14, 757},
                         {15, 458},

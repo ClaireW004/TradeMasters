@@ -30,6 +30,10 @@ public:
     }
     void traverse(string key){
         for (auto pair : graph[key]) {
+            if(graph[key].size()==0){
+                cout<<"Country is not importing certain good from other countries!"<<endl;
+                return;
+            }
             std::cout << country_map[pair.first] << " -> " << pair.second << std::endl;
         }
     }
