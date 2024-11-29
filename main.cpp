@@ -5,17 +5,94 @@
 #include "AdjacencyList.h"
 #include "AdjacencyMatrix.h"
 #include "fileRead.h"
-using namespace std;
+
+bool isProductCodeInCSV(const string& filename, const string& productCode) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open the file!" << endl;
+        return false;
+    }
+
+    string line;
+    while (getline(file, line)) {
+        size_t commaPos = line.find(',');
+        if (commaPos == string::npos) {
+            continue;
+        }
+
+        string code = line.substr(0, commaPos);
+        if (code == productCode) {
+            return true;
+        }
+    }
+
+    file.close();
+    return false;
+}
+
+vector<unordered_map<string, string>> parseCountryFile(const string& filePath) {
+    vector<unordered_map<string, string>> result = {};
+    unordered_map<string, string> countryMapWithCodeVal;
+    unordered_map<string, string> countryMapWithNameVal;
+    ifstream file(filePath);
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return result;
+    }
+
+    string line;
+    getline(file, line);
+
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string country_code, country_name;
+
+        getline(ss, country_code, ',');
+        getline(ss, country_name, ',');
+
+
+        countryMapWithCodeVal[country_code] = country_name;
+        countryMapWithNameVal[country_name] = country_code;
+    }
+
+    file.close();
+    result.push_back(countryMapWithCodeVal);
+    result.push_back(countryMapWithNameVal);
+    return result;
+}
+
+
+string ensureValidCountryName(const unordered_map<string, string>& countryMapNameToCode, string inputCountryName){
+    bool incorrectName = true;
+    while(incorrectName){
+        if(countryMapNameToCode.count(inputCountryName) == 0){
+            cout << "\nThe country name you entered was not recognized. Please ensure the name is spelled correctly and try again."
+                    "\nPlease reference the country codes document for exact spellings.\n" << endl;
+            //gets the new input name
+            cin >> inputCountryName;
+        }else{
+            incorrectName = false;
+        }
+    }
+    return inputCountryName;
+}
+
 
 int main() {
+    unordered_map<string, string> countryMapCodeToName;
+    unordered_map<string, string> countryMapNameToCode;
+    vector<unordered_map<string, string>> countryMaps = parseCountryFile("country_codes_V202401b.csv");
+    countryMapCodeToName = countryMaps[0];
+    countryMapNameToCode = countryMaps[1];
 
     AdjacencyList adjList;
     AdjacencyMatrix adjMatrix;
-    bool first = true;
+    bool runProgram = true;
     cout << "Welcome to TradeMasters!" << endl;
     string testStructure;
     string productCode;
-    while (first) {
+    while (runProgram) {
         cout << "Please enter number for the data structure you would like to test\n1. Adjacency List\n2. Adjacency Matrix" << endl;
         cin >> testStructure;
         cout << endl;
@@ -46,8 +123,11 @@ int main() {
                     perUnitCost = stof(price) / stof(weight);
 
                     if (code == productCode) {
-                        if (testStructure == "1")
+                        if (testStructure == "1"){
                             adjList.add_keys(importer, exporter1, to_string(perUnitCost));
+                        }
+
+
                         if (testStructure == "2")
                             adjMatrix.addTradeRelation(importer, exporter1, perUnitCost);
                     }
@@ -55,76 +135,40 @@ int main() {
             }
 
             file.close();
-            bool second = true;
-            while (second) {
-                cout << "Choose the importing country: " << endl;
-                int imp;
-                cout <<
-                     "1. USA  \n"
-                     "2. China  \n"
-                     "3. Germany  \n"
-                     "4. Japan  \n"
-                     "5. India  \n"
-                     "6. United Kingdom  \n"
-                     "7. France  \n"
-                     "8. Brazil  \n"
-                     "9. Viet Nam  \n"
-                     "10. Rep. of Korea  \n"
-                     "11. Ireland  \n"
-                     "12. Italy  \n"
-                     "13. Thailand  \n"
-                     "14. Switzerland  \n"
-                     "15. Malaysia  \n"
-                     "16. Indonesia \n";
-
-                unordered_map<int, int> importCountryMap = {
-                        {1, 842},
-                        {2, 156},
-                        {3, 276},
-                        {4, 392},
-                        {5, 699},
-                        {6, 826},
-                        {7, 251},
-                        {8, 76},
-                        {9, 704},
-                        {10, 410},
-                        {11, 372},
-                        {12, 380},
-                        {13, 764},
-                        {14, 757},
-                        {15, 458},
-                        {16, 360}
-                };
+            bool choosingCountryData = true;
+            while (choosingCountryData) {
+                cout << "Type in the name of the importing country you would like to see data for: " << endl;
+                string inputCountryName;
                 bool inner = true;
                 while (inner) {
-                    cin >> imp;
+                    cin >> inputCountryName;
                     // TODO: Increase the range or instead provide country by name
-                    if (imp > 16 || imp < 1) {
-                        cout << "Wrong input, try to choose again!" << endl;
-                        inner = true;
-                    } else {
-                        if (testStructure == "1")
-                            adjList.traverseList(to_string(importCountryMap[imp]));
-                        if (testStructure == "2")
-                            adjMatrix.traverseMatrix(importCountryMap[imp]);
-                        cout << endl;
-                        cout << "Search Complete\n0. Choose a different importer for the same good\n1. Exit" << endl;
-                        int c;
-                        cin >> c;
-                        if (c == 0) {
-                            second = true;
-                            inner = false;
-                        } else {
-                            first = false;
-                            second = false;
-                            inner = false;
-                        }
+                    string correctCountryName = ensureValidCountryName(countryMapNameToCode, inputCountryName);
+                    if (testStructure == "1"){
+                        adjList.traverseList(correctCountryName, countryMapCodeToName, countryMapNameToCode);
                     }
+                    if (testStructure == "2"){
+                        adjMatrix.traverseMatrix(stoi(countryMapNameToCode[correctCountryName]));
+                    }
+
+                    cout << endl;
+                    cout << "Search Complete\n0. Choose a different importer for the same good\n1. Exit" << endl;
+                    int c;
+                    cin >> c;
+                    if (c == 0) {
+                        choosingCountryData = true;
+                        inner = false;
+                    } else {
+                        runProgram = false;
+                        choosingCountryData = false;
+                        inner = false;
+                    }
+
                 }
             }
         } else {
             cout << "Product code " << productCode << " was NOT found in the CSV file, please enter valid code." << endl;
-            first = true;
+            runProgram = true;
         }
 
 

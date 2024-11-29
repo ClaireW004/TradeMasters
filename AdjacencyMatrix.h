@@ -11,6 +11,7 @@
 using namespace std;
 
 class AdjacencyMatrix {
+private:
     vector<string> countries;
     int num_countries = 895;
     vector<vector<float>> matrix;

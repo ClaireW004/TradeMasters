@@ -12,12 +12,12 @@
 //
 //
 //unordered_map<string, string> parseCountryFile(const string& filePath) {
-//    unordered_map<string, string> country_map;
+//    unordered_map<string, string> countryMapCodeToName;
 //    ifstream file(filePath);
 //
 //    if (!file.is_open()) {
 //        std::cerr << "Error opening file: " << filePath << std::endl;
-//        return country_map;
+//        return countryMapCodeToName;
 //    }
 //
 //    string line;
@@ -31,11 +31,11 @@
 //        getline(ss, country_name_abbreviation, ',');
 //
 //
-//        country_map[country_code] = country_name_abbreviation;
+//        countryMapCodeToName[country_code] = country_name_abbreviation;
 //    }
 //
 //    file.close();
-//    return country_map;
+//    return countryMapCodeToName;
 //}
 //bool isProductCodeInCSV(const string& filename, const string& productCode) {
 //    ifstream file(filename);

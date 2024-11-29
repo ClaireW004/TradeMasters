@@ -10,19 +10,12 @@
 #include "fileRead.h"
 using namespace std;
 
-unordered_map<string, string> parseCountryFile(const string& filePath);
-bool isProductCodeInCSV(const string& filename, const string& productCode);
-
 class AdjacencyList {
-public:
+private:
     map<string, vector<pair<string, string>>> graph;
     map<float,vector<string>> outputMap;
-
-    string testOutput;
-    unordered_map<string, string> country_map = parseCountryFile("country_codes_V202401b.csv");
-
-    void add_keys(string importer, string exporter1, string price);
-    void traverseList(string key);
-    void clean();
+public:
+    void add_keys(const string& importer, const string& exporter1, const string& price);
+    void traverseList(const string& inputCountryName, unordered_map<string, string> countryMapCodeToName, unordered_map<string, string> countryMapNameToCode);
 };
 
