@@ -148,7 +148,9 @@ int main() {
                 //if "0" is input, the user cannot change the product they selected to search for,
                 //but the user can look at trade data for the selected product for a different country
                 while (inner) {
-                    cin >> inputCountryName;
+                    //clear the input buffer before taking in new input
+                    cin.ignore();
+                    getline(cin, inputCountryName);
                     string correctCountryName = ensureValidCountryName(countryMapNameToCode, inputCountryName);
                     if (testStructure == "1"){
                         adjList.traverseList(correctCountryName, countryMapCodeToName, countryMapNameToCode);
