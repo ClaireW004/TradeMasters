@@ -75,7 +75,7 @@ string ensureValidCountryName(const unordered_map<string, string>& countryMapNam
             cout << "\nThe country name you entered was not recognized. Please ensure the name is spelled correctly and try again."
                     "\nPlease reference the country codes document for exact spellings.\n" << endl;
             //gets the new input name
-            cin >> inputCountryName;
+            getline(cin, inputCountryName);
         }else{
             incorrectName = false;
         }
@@ -147,9 +147,9 @@ int main() {
                 //this inner while loop continues until the user enters "1" to exit the program.
                 //if "0" is input, the user cannot change the product they selected to search for,
                 //but the user can look at trade data for the selected product for a different country
+                cin.ignore();
                 while (inner) {
                     //clear the input buffer before taking in new input
-                    cin.ignore();
                     getline(cin, inputCountryName);
                     string correctCountryName = ensureValidCountryName(countryMapNameToCode, inputCountryName);
                     if (testStructure == "1"){

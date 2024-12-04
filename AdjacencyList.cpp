@@ -11,6 +11,7 @@ void AdjacencyList::add_keys(const string& importer, const string& exporter1, co
 
 //this function goes through the entire adjacency list
 void AdjacencyList::traverseList(const string& inputCountryName, unordered_map<string, string> countryMapCodeToName, unordered_map<string, string> countryMapNameToCode){
+    outputMap.clear();
     string countryCode = countryMapNameToCode[inputCountryName];
     //goes through each exporter, price pair for the user-selected importing country
     for (const auto& pair : graph[countryCode]) {
